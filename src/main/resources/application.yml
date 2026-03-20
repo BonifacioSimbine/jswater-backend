@@ -1,0 +1,35 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
+spring:
+  application:
+    name: JsWater
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+  logging:
+    level:
+      org.springframework.security: DEBUG
+  jpa:
+    show-sql: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+flyway:
+  locations: filesystem:/opt/apps/jswater/db/migration
+  baseline-on-migrate: true
+  baseline-version: 1
+  out-of-order: true
+  repair-on-migrate: true
+  validate-on-migrate: false

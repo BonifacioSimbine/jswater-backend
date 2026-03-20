@@ -72,17 +72,25 @@ public class ClientController {
     public ClientResponse register(
             @RequestBody @Valid RegisterClientRequest request
     ) {
-        Client client = registerClientUseCase.execute(
-                request.fullName(),
-                request.documentType(),
-                request.documentNumber(),
-                request.phoneNumber(),
-                request.bairro(),
-                request.localidade(),
-                request.rua(),
-                request.referencia()
-        );
-        return ClientResponse.from(client);
+        try {
+            com.kivora.JsWater.domain.model.client.DocumentType docType = com.kivora.JsWater.domain.model.client.DocumentType.valueOf(request.documentType());
+            Client client = registerClientUseCase.execute(
+                    request.fullName(),
+                    docType,
+                    request.documentNumber(),
+                    request.phoneNumber(),
+                    request.bairro(),
+                    request.localidade(),
+                    request.rua(),
+                    request.referencia()
+            );
+            return ClientResponse.from(client);
+        } catch (com.kivora.JsWater.domain.exception.FieldException ex) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY,
+                    ex.getMessage()
+            );
+        }
     }
 
         @Operation(

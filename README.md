@@ -28,8 +28,20 @@ Inclui:
 ## Configuração
 
 1. Crie uma base de dados PostgreSQL, por exemplo `jswater`.
-2. Configure as credenciais em `src/main/resources/application.properties` (URL, username, password).
-3. Confirme a porta HTTP (por omissão 8080).
+2. Configure as credenciais nos arquivos de configuração YAML:
+   - `src/main/resources/application.yml`: configurações base (placeholders para variáveis de ambiente)
+   - `src/main/resources/application-dev.yml`: configurações de desenvolvimento (valores reais para dev)
+   - `src/main/resources/application-prod.yml`: configurações de produção (valores reais para prod)
+
+   Exemplo:
+   ```yaml
+   spring:
+     datasource:
+       url: jdbc:mysql://localhost:3306/jswater_dev
+       username: dev_user
+       password: dev_pass
+   ```
+3. Confirme a porta HTTP em cada arquivo YAML conforme o ambiente (por omissão 8080 para produção, 8081 para dev).
 
 ## Executar em desenvolvimento
 

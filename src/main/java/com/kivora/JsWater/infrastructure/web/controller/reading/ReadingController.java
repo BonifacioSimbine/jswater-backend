@@ -4,6 +4,7 @@ import com.kivora.JsWater.application.usecase.reading.GetReadingByIdUseCase;
 import com.kivora.JsWater.application.usecase.reading.RegisterReadingUseCase;
 import com.kivora.JsWater.application.usecase.reading.ListReadingsUseCase;
 import com.kivora.JsWater.application.usecase.reading.DeleteReadingUseCase;
+import com.kivora.JsWater.domain.exception.FieldException;
 import com.kivora.JsWater.domain.model.reading.Reading;
 import com.kivora.JsWater.domain.valueobject.meter.MeterId;
 import com.kivora.JsWater.domain.valueobject.reading.ReadingValue;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/readings")
@@ -52,12 +54,18 @@ public class ReadingController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public ReadingResponse register(@RequestBody @Valid RegisterReadingRequest registerReadingRequest) {
+        try{
         Reading reading = registerReadingUseCase.execute(
                 new MeterId(registerReadingRequest.meterId()),
                 new ReadingValue(registerReadingRequest.currentReading())
         );
 
         return ReadingResponse.from(reading);
+      }catch (FieldException ex) {
+        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                ex.getMessage()
+        );
+      }
     }
 
     @Operation(

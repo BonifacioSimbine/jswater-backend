@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jswater
+    username: postgres
+    password: systems2026
+  jpa:
+    show-sql: true
+  security:
+    jwt:
+      secret: dev-secret-key-123
+logging:
+  level:
+    org.springframework.security: DEBUG
+server:
+  port: 8080
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+
+security:
+  jwt:
+    secret: 7f9c2a1d8b4e6c3f9a2b7d1e8c4f6a9b
+
+# configuration.setAllowedOrigins(List.of("http://localhost:3000"));
