@@ -10,6 +10,10 @@ import com.kivora.JsWater.domain.repository.ReadingRepository;
 import com.kivora.JsWater.domain.valueobject.meter.MeterId;
 import com.kivora.JsWater.domain.valueobject.reading.ReadingValue;
 
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.Locale;
+
 public class RegisterReadingUseCase {
 
     private final MeterRepository meterRepository;
@@ -25,6 +29,17 @@ public class RegisterReadingUseCase {
     }
 
     public Reading execute(MeterId meterId, ReadingValue currentReading) {
+        // Permitir apenas uma leitura por mês
+        YearMonth currentMonth = YearMonth.now();
+        com.kivora.JsWater.domain.valueobject.invoice.InvoicePeriod currentPeriod = com.kivora.JsWater.domain.valueobject.invoice.InvoicePeriod.of(currentMonth);
+        if (readingRepository.existsForPeriod(meterId, currentPeriod)) {
+            String monthName = currentMonth.getMonth()
+                    .getDisplayName(TextStyle.FULL, new Locale("pt", "PT"));
+            throw new com.kivora.JsWater.domain.exception.reading.ReadingAlreadyExistsException(
+                "Já existe uma leitura registada para este contador no mês de " + monthName
+            );
+        }
+        
         Meter meter = meterRepository.findById(meterId)
                 .orElseThrow(() -> new MeterNotFoundException(meterId));
 

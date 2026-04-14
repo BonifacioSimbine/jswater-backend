@@ -57,6 +57,11 @@ public class GetBillingDetailReportUseCase {
         log.info("[Relatório Detalhado] Faturas WATER encontradas para o período {}: {}", period.value(), waterCount);
         log.info("[Relatório Detalhado] Faturas FINE encontradas para o período {}: {}", period.value(), fineCount);
 
+        // Logar todas as faturas de multa para o período
+        allInvoices.stream()
+            .filter(i -> i.getType() == InvoiceType.FINE)
+            .forEach(i -> log.info("[DEBUG MULTA] FINE: clientId={} period={} valor={}", i.getClientId().getValue(), i.getPeriod().value(), i.getTotalAmount().getValue()));
+
         Map<UUID, BigDecimal> finesByClient = calculateFinesByClientForPeriod(allInvoices, period);
 
         Tariff activeTariff = null;
@@ -203,7 +208,9 @@ public class GetBillingDetailReportUseCase {
             if (invoice.getType() != InvoiceType.FINE) {
                 continue;
             }
+            log.info("[DEBUG MULTA] Verificando multa: clientId={} period={} esperado={} valor={}", invoice.getClientId().getValue(), invoice.getPeriod().value(), period.value(), invoice.getTotalAmount().getValue());
             if (!invoice.getPeriod().equals(period)) {
+                log.info("[DEBUG MULTA] Ignorado: período não coincide ({} != {})", invoice.getPeriod().value(), period.value());
                 continue;
             }
 
@@ -211,6 +218,7 @@ public class GetBillingDetailReportUseCase {
             BigDecimal currentTotal = finesByClient.getOrDefault(clientId, BigDecimal.ZERO);
             BigDecimal newTotal = currentTotal.add(invoice.getTotalAmount().getValue());
             finesByClient.put(clientId, newTotal);
+            log.info("[DEBUG MULTA] Somando multa para clientId={}: totalAtual={} + multa={} => novoTotal={}", clientId, currentTotal, invoice.getTotalAmount().getValue(), newTotal);
         }
 
         return finesByClient;

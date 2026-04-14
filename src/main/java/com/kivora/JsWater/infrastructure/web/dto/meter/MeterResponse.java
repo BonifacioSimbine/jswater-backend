@@ -24,7 +24,7 @@ public record MeterResponse(
         );
     }
     
-    // Método de compatibilidade (sem nome)
+    
     public static MeterResponse from(Meter meter) {
         return from(meter, "Desconhecido");
     }

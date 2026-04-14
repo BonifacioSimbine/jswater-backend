@@ -28,20 +28,29 @@ Inclui:
 ## Configuração
 
 1. Crie uma base de dados PostgreSQL, por exemplo `jswater`.
-2. Configure as credenciais nos arquivos de configuração YAML:
-   - `src/main/resources/application.yml`: configurações base (placeholders para variáveis de ambiente)
-   - `src/main/resources/application-dev.yml`: configurações de desenvolvimento (valores reais para dev)
-   - `src/main/resources/application-prod.yml`: configurações de produção (valores reais para prod)
+2. Defina as credenciais por variáveis de ambiente. Os arquivos YAML versionados usam apenas placeholders e não devem conter segredos reais.
+3. Crie um arquivo `.env.example` como referência e use um arquivo local `.env` apenas na sua máquina. O `.env` e variantes como `.env.local` estão ignorados pelo Git.
+4. Exporte as variáveis no terminal antes de arrancar a aplicação, ou configure-as na sua IDE.
 
-   Exemplo:
-   ```yaml
-   spring:
-     datasource:
-       url: jdbc:mysql://localhost:3306/jswater_dev
-       username: dev_user
-       password: dev_pass
-   ```
-3. Confirme a porta HTTP em cada arquivo YAML conforme o ambiente (por omissão 8080 para produção, 8081 para dev).
+Exemplo no PowerShell:
+
+```powershell
+$env:DB_URL="jdbc:postgresql://localhost:5433/jswater"
+$env:DB_USERNAME="postgres"
+$env:DB_PASSWORD="coloque-aqui-a-sua-password"
+$env:JWT_SECRET="coloque-aqui-um-segredo-com-pelo-menos-32-caracteres"
+```
+
+Exemplo no CMD:
+
+```bat
+set DB_URL=jdbc:postgresql://localhost:5433/jswater
+set DB_USERNAME=postgres
+set DB_PASSWORD=coloque-aqui-a-sua-password
+set JWT_SECRET=coloque-aqui-um-segredo-com-pelo-menos-32-caracteres
+```
+
+5. Confirme a porta HTTP em cada arquivo YAML conforme o ambiente.
 
 ## Executar em desenvolvimento
 
@@ -53,6 +62,16 @@ mvnw.cmd spring-boot:run
 
 # Linux/macOS
 ./mvnw spring-boot:run
+```
+
+Se quiser activar explicitamente o perfil de desenvolvimento:
+
+```bash
+# Windows
+mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Linux/macOS
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 A API ficará disponível em `http://localhost:8080`.

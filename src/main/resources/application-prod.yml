@@ -1,10 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://prod-db-server:5432/jswater_prod
-    username: prod_user
-    password: prod_pass
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     show-sql: false
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
 logging:
   level:
     org.springframework.security: INFO
@@ -13,8 +16,3 @@ server:
 
 # CORS: configure o domínio do frontend de produção em SecurityConfig.java
 # Exemplo: configuration.setAllowedOrigins(List.of("https://meusite.com"));
-
-# expose legacy property key expected by JwtService (set real secret via env in production)
-security:
-  jwt:
-    secret: prod-secret-placeholder
